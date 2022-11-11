@@ -6,7 +6,7 @@ import {
   WalletAccount,
 } from './types'
 import { Hash } from '@polkadot/types/interfaces'
-import { getBlockExplorerBlockInfoLink } from './subsocial/utils'
+import { getBlockExplorerBlockInfoLink } from './utils'
 
 export function generateQueryWrapper<ReturnOfPreQuery, CommonParams>(
   preQueryRun: (data: CommonParams) => Promise<ReturnOfPreQuery>
