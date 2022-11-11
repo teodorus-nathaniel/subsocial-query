@@ -1,5 +1,12 @@
 import { QueryClient } from '@tanstack/react-query'
-import { QueryConfig } from './types'
+import {
+  MutationConfig,
+  QueryConfig,
+  Transaction,
+  WalletAccount,
+} from './types'
+import { Hash } from '@polkadot/types/interfaces'
+import { getBlockExplorerBlockInfoLink } from './subsocial/utils'
 
 export function generateQueryWrapper<ReturnOfPreQuery, CommonParams>(
   preQueryRun: (data: CommonParams) => Promise<ReturnOfPreQuery>
@@ -57,107 +64,122 @@ export function makeCombinedCallback(
   }
 }
 
-// export async function createTxAndSend<Param, OtherParams extends unknown[]>(
-//   transactionGenerator: (
-//     param: Param,
-//     ...others: OtherParams
-//   ) => Promise<{ tx: Transaction; summary: string }>,
-//   param: Param,
-//   currentWallet: WalletAccount,
-//   setWallet: (newWallet: WalletAccount) => void,
-//   networkRpc: string,
-//   config?: MutationConfig<Param>,
-//   defaultConfig?: MutationConfig<Param>,
-//   ...otherParams: OtherParams
-// ) {
-//   let usedWallet = currentWallet
-//   if (isEmptyObj(currentWallet.signer)) {
-//     const newWallet = await activateWalletFromSavedAccount(currentWallet)
-//     if (!newWallet) {
-//       throw new Error("Can't connect to your wallet")
-//     }
-//     setWallet(newWallet)
-//     usedWallet = newWallet
-//   }
+export interface TxCallbacksParams {
+  summary: string
+  address: string
+  params: any
+  explorerLink?: string
+  error?: string
+}
+const DEFAULT_TX_CALLBACKS = {
+  onBroadcast: ({ summary }: TxCallbacksParams) =>
+    console.info(`Broadcasting ${summary}...`),
+  onError: ({ error }: TxCallbacksParams) => console.error(error),
+  onSuccess: ({ summary }: TxCallbacksParams) =>
+    console.log(`Success submit ${summary}...`),
+}
+let txCallbacks = DEFAULT_TX_CALLBACKS
+export const setupTxCallbacks = (callbacks: Partial<typeof txCallbacks>) => {
+  txCallbacks = { ...DEFAULT_TX_CALLBACKS, ...callbacks }
+}
 
-//   const { tx, summary } = await transactionGenerator(param, ...otherParams)
-//   return sendTransaction(
-//     tx,
-//     usedWallet,
-//     summary,
-//     param,
-//     networkRpc,
-//     config,
-//     defaultConfig
-//   )
-// }
-// export function sendTransaction<Param>(
-//   tx: Transaction,
-//   wallet: WalletAccount,
-//   summary: string,
-//   param: Param,
-//   networkRpc: string,
-//   config?: MutationConfig<Param>,
-//   defaultConfig?: MutationConfig<Param>
-// ) {
-//   return new Promise<Hash>(async (resolve, reject) => {
-//     try {
-//       const unsub = await tx.signAndSend(
-//         wallet.address,
-//         {
-//           signer: wallet.signer as any,
-//         },
-//         async (result) => {
-//           resolve(result.txHash as unknown as Hash)
-//           if (result.status.isBroadcast) {
-//             toast.info(`${summary}...`)
-//           } else if (result.status.isInBlock) {
-//             const blockHash = (result.status.toJSON() ?? ({} as any)).inBlock
-//             const blockExplorerLink = (
-//               <Link
-//                 variant='primary'
-//                 className={clsx('text-xs')}
-//                 target='_blank'
-//                 href={getBlockExplorerBlockInfoLink(networkRpc, blockHash)}
-//               >
-//                 See Detail
-//               </Link>
-//             )
-//             if (
-//               result.isError ||
-//               result.dispatchError ||
-//               result.internalError
-//             ) {
-//               toast.error(
-//                 <div>
-//                   <p>Error {summary}</p>
-//                   <p className='text-text-secondary text-sm'>
-//                     Error Code: {result.dispatchError?.toString()}
-//                   </p>
-//                   {blockExplorerLink}
-//                 </div>
-//               )
-//             } else {
-//               const onTxSuccess = makeCombinedCallback(
-//                 defaultConfig,
-//                 config,
-//                 'onTxSuccess'
-//               )
-//               onTxSuccess(param, wallet.address)
-//               toast.success(
-//                 <div>
-//                   <p>Success {summary}!</p>
-//                   {blockExplorerLink}
-//                 </div>
-//               )
-//             }
-//             unsub()
-//           }
-//         }
-//       )
-//     } catch (e) {
-//       toast.error((e as any).message)
-//       reject(e)
-//     }
-//   })
-// }
+export async function createTxAndSend<Param, AdditionalParams>(
+  transactionGenerator: (
+    param: Param,
+    additionalParams: AdditionalParams
+  ) => Promise<{ tx: Transaction; summary: string }>,
+  param: Param,
+  additionalParams: AdditionalParams,
+  txConfig: {
+    wallet: WalletAccount
+    networkRpc?: string
+  },
+  config?: MutationConfig<Param>,
+  defaultConfig?: MutationConfig<Param>
+) {
+  const { tx, summary } = await transactionGenerator(param, additionalParams)
+  return sendTransaction(
+    {
+      tx,
+      wallet: txConfig.wallet,
+      params: param,
+      networkRpc: txConfig.networkRpc,
+      summary,
+    },
+    config,
+    defaultConfig
+  )
+}
+export function sendTransaction<Param>(
+  txInfo: {
+    tx: Transaction
+    summary: string
+    wallet: WalletAccount
+    params: Param
+    networkRpc: string | undefined
+  },
+  config?: MutationConfig<Param>,
+  defaultConfig?: MutationConfig<Param>
+) {
+  const {
+    networkRpc,
+    params,
+    summary,
+    tx,
+    wallet: { address, signer },
+  } = txInfo
+  return new Promise<Hash>(async (resolve, reject) => {
+    try {
+      const unsub = await tx.signAndSend(
+        address,
+        {
+          signer,
+        },
+        async (result) => {
+          resolve(result.txHash as unknown as Hash)
+          if (result.status.isBroadcast) {
+            txCallbacks.onBroadcast({
+              summary,
+              params: params,
+              address,
+            })
+          } else if (result.status.isInBlock) {
+            const blockHash = (result.status.toJSON() ?? ({} as any)).inBlock
+            let explorerLink: string | undefined
+            if (networkRpc) {
+              explorerLink = getBlockExplorerBlockInfoLink(
+                networkRpc,
+                blockHash
+              )
+            }
+            if (
+              result.isError ||
+              result.dispatchError ||
+              result.internalError
+            ) {
+              txCallbacks.onError({
+                error: result.dispatchError?.toString(),
+                summary,
+                address,
+                params,
+                explorerLink,
+              })
+            } else {
+              const onTxSuccess = makeCombinedCallback(
+                defaultConfig,
+                config,
+                'onTxSuccess'
+              )
+              onTxSuccess(params, address)
+              txCallbacks.onSuccess({ explorerLink, summary, address, params })
+            }
+            unsub()
+          }
+        }
+      )
+    } catch (e) {
+      txCallbacks.onError((e as any).message)
+      reject(e)
+    }
+  })
+}

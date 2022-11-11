@@ -1,8 +1,19 @@
 import { SubsocialApi } from '@subsocial/api'
-import { useQuery } from '@tanstack/react-query'
-import { generateQueryWrapper, mergeQueryConfig } from '..'
-import { QueryConfig } from '../types'
+import { useMutation, UseMutationResult, useQuery } from '@tanstack/react-query'
+import {
+  createTxAndSend,
+  generateQueryWrapper,
+  makeCombinedCallback,
+  mergeQueryConfig,
+} from '..'
+import {
+  MutationConfig,
+  QueryConfig,
+  Transaction,
+  WalletAccount,
+} from '../types'
 import { getSubsocialApi } from './connection'
+import { Hash } from '@polkadot/types/interfaces'
 
 export const subsocialQueryWrapper = generateQueryWrapper(async () => null)
 
@@ -21,4 +32,34 @@ export function useSubsocialQuery<ReturnValue, Params>(
     subsocialQueryWrapper(func, getSubsocialApi),
     mergedConfig
   )
+}
+
+export function useSubsocialMutation<Param>(
+  wallet: WalletAccount,
+  transactionGenerator: (
+    params: Param,
+    api: SubsocialApi
+  ) => Promise<{ tx: Transaction; summary: string }>,
+  config?: MutationConfig<Param>,
+  defaultConfig?: MutationConfig<Param>
+): UseMutationResult<Hash, Error, Param, unknown> {
+  const workerFunc = async (param: Param) => {
+    if (!wallet) throw new Error('You need to connect your wallet first!')
+    const subsocialApi = await getSubsocialApi()
+    return createTxAndSend(
+      transactionGenerator,
+      param,
+      subsocialApi,
+      { wallet, networkRpc: '' },
+      config,
+      defaultConfig
+    )
+  }
+
+  return useMutation(workerFunc, {
+    ...(defaultConfig || {}),
+    ...config,
+    onSuccess: makeCombinedCallback(defaultConfig, config, 'onSuccess'),
+    onError: makeCombinedCallback(defaultConfig, config, 'onError'),
+  })
 }

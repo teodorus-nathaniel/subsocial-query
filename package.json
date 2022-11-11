@@ -1,6 +1,6 @@
 {
-  "name": "example-typescript-package",
-  "version": "0.2.2",
+  "name": "subsocial-query",
+  "version": "1.0.0",
   "description": "",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -28,17 +28,12 @@
     "dist"
   ],
   "keywords": [
-    "example",
     "typescript",
     "npm",
     "package",
-    "sample",
-    "boilerplate",
-    "starter",
-    "demo",
-    "cjs",
-    "esm",
-    "umd"
+    "subsocial",
+    "react-query",
+    "subsocial-sdk"
   ],
   "author": "Tom Chen <tomchen.org@gmail.com>",
   "license": "MIT",
@@ -51,6 +46,7 @@
     "url": "https://github.com/tomchen/example-typescript-package/issues"
   },
   "dependencies": {
+    "@polkadot/extension-dapp": "^0.44.6",
     "@subsocial/api": "^0.7.8-dev.0",
     "@tanstack/react-query": "^4.14.6",
     "pool-query": "^1.1.2"
