@@ -21,6 +21,8 @@ export function generateQueryWrapper<ReturnOfPreQuery, CommonParams>(
   }
 }
 
+export const queryWrapper = generateQueryWrapper(async () => null)
+
 export function mergeQueryConfig<T, V>(
   config?: QueryConfig<any, any>,
   defaultConfig?: QueryConfig<T, V>
