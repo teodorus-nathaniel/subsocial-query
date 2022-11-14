@@ -1,4 +1,3 @@
-import { Hash } from '@polkadot/types/interfaces'
 import { UseMutationOptions, UseQueryOptions } from '@tanstack/react-query'
 import { ApiPromise } from '@polkadot/api'
 
@@ -7,7 +6,7 @@ export type QueryConfig<T = any, V = any> = Omit<
   'queryFn' | 'queryKey'
 >
 export type MutationConfig<Param> = UseMutationOptions<
-  Hash,
+  string,
   Error,
   Param,
   unknown

@@ -5,7 +5,6 @@ import {
   Transaction,
   WalletAccount,
 } from './types'
-import { Hash } from '@polkadot/types/interfaces'
 import { getBlockExplorerBlockInfoLink } from './utils'
 
 export function generateQueryWrapper<ReturnOfPreQuery, CommonParams>(
@@ -128,7 +127,7 @@ export function sendTransaction<Param>(
     tx,
     wallet: { address, signer },
   } = txInfo
-  return new Promise<Hash>(async (resolve, reject) => {
+  return new Promise<string>(async (resolve, reject) => {
     try {
       const unsub = await tx.signAndSend(
         address,
@@ -136,7 +135,7 @@ export function sendTransaction<Param>(
           signer,
         },
         async (result) => {
-          resolve(result.txHash as unknown as Hash)
+          resolve(result.txHash.toString())
           if (result.status.isBroadcast) {
             txCallbacks.onBroadcast({
               summary,

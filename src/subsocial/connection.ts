@@ -21,9 +21,13 @@ const presets = {
   prod: DEFAULT_PROD_CONFIG,
 }
 const DEFAULT_CONFIG_PRESET: keyof typeof presets = 'staging'
+
 let config: Omit<SubsocialApiProps, 'substrateApi'> & { substrateUrl: string } =
   presets[DEFAULT_CONFIG_PRESET]
-export const initSubsocialConfig = (
+export function getConnectionConfig() {
+  return config
+}
+export const setSubsocialConfig = (
   preset: keyof typeof presets,
   customConfig?: SubsocialApiProps
 ) => {

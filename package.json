@@ -35,25 +35,25 @@
     "react-query",
     "subsocial-sdk"
   ],
-  "author": "Tom Chen <tomchen.org@gmail.com>",
+  "author": "Teodorus Nathaniel",
   "license": "MIT",
-  "homepage": "https://github.com/tomchen/example-typescript-package",
+  "homepage": "https://github.com/teodorus-nathaniel/subsocial-query",
   "repository": {
     "type": "git",
-    "url": "git@github.com:tomchen/example-typescript-package.git"
+    "url": "git@github.com:teodorus-nathaniel/subsocial-query.git"
   },
   "bugs": {
-    "url": "https://github.com/tomchen/example-typescript-package/issues"
+    "url": "https://github.com/teodorus-nathaniel/subsocial-query/issues"
   },
   "dependencies": {
-    "@polkadot/types": "^9.7.1",
+    "pool-query": "^1.1.5"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^4.14.6",
     "@subsocial/api": "^0.7.8-dev.0",
     "@subsocial/definitions": "^0.7.8-dev.0",
     "@subsocial/types": "^0.6.8",
-    "@subsocial/utils": "^0.7.8-dev.0",
-    "@tanstack/react-query": "^4.14.6",
-    "pool-query": "^1.1.2",
-    "react": "^18.2.0"
+    "@subsocial/utils": "^0.7.8-dev.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^13.1.0",

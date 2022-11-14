@@ -12,8 +12,7 @@ import {
   Transaction,
   WalletAccount,
 } from '../types'
-import { getSubsocialApi } from './connection'
-import { Hash } from '@polkadot/types/interfaces'
+import { getConnectionConfig, getSubsocialApi } from './connection'
 
 export const subsocialQueryWrapper = generateQueryWrapper(async () => null)
 
@@ -42,7 +41,7 @@ export function useSubsocialMutation<Param>(
   ) => Promise<{ tx: Transaction; summary: string }>,
   config?: MutationConfig<Param>,
   defaultConfig?: MutationConfig<Param>
-): UseMutationResult<Hash, Error, Param, unknown> {
+): UseMutationResult<string, Error, Param, unknown> {
   const workerFunc = async (param: Param) => {
     if (!wallet) throw new Error('You need to connect your wallet first!')
     const subsocialApi = await getSubsocialApi()
@@ -50,7 +49,7 @@ export function useSubsocialMutation<Param>(
       transactionGenerator,
       param,
       subsocialApi,
-      { wallet, networkRpc: '' },
+      { wallet, networkRpc: getConnectionConfig().substrateUrl },
       config,
       defaultConfig
     )
