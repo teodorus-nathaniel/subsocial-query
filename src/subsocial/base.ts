@@ -16,7 +16,7 @@ import { getConnectionConfig, getSubsocialApi } from './connection'
 
 export function useSubsocialQuery<ReturnValue, Params>(
   params: { key: string; data: Params | null },
-  func: (data: { params: Params; api: SubsocialApi }) => Promise<ReturnValue>,
+  func: (params: Params, api: SubsocialApi) => Promise<ReturnValue>,
   config?: QueryConfig,
   defaultConfig?: QueryConfig<ReturnValue, Params>
 ) {
