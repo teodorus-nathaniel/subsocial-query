@@ -7,14 +7,14 @@ import {
 } from './types'
 import { getBlockExplorerBlockInfoLink } from './utils'
 
-export function queryWrapper<ReturnType, Params, AdditionalParam>(
-  func: (params: Params & AdditionalParam) => Promise<ReturnType>,
-  getAdditionalData: () => Promise<AdditionalParam>
+export function queryWrapper<ReturnType, Data, AdditionalData>(
+  func: (params: { data: Data } & AdditionalData) => Promise<ReturnType>,
+  getAdditionalData: () => Promise<AdditionalData>
 ) {
   return async ({ queryKey }: any) => {
     const params = queryKey[1]
     const additionalData = await getAdditionalData()
-    return func({ ...additionalData, ...params })
+    return func({ ...additionalData, data: params })
   }
 }
 

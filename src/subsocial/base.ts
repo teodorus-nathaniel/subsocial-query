@@ -14,16 +14,18 @@ import {
 } from '../types'
 import { getConnectionConfig, getSubsocialApi } from './connection'
 
-export function useSubsocialQuery<ReturnValue, Params>(
-  params: { key: string; data: Params | null },
-  func: (params: Params & { api: SubsocialApi }) => Promise<ReturnValue>,
+export function useSubsocialQuery<ReturnValue, Data>(
+  params: { key: string; data: Data | null },
+  func: (
+    params: { data: Data } & { api: SubsocialApi }
+  ) => Promise<ReturnValue>,
   config?: QueryConfig,
-  defaultConfig?: QueryConfig<ReturnValue, Params>
+  defaultConfig?: QueryConfig<ReturnValue, Data>
 ) {
   const mergedConfig = mergeQueryConfig(config, defaultConfig)
   return useQuery(
     [params.key, params.data],
-    queryWrapper<ReturnValue, Params, { api: SubsocialApi }>(func, async () => {
+    queryWrapper<ReturnValue, Data, { api: SubsocialApi }>(func, async () => {
       const api = await getSubsocialApi()
       return { api }
     }),
