@@ -7,27 +7,19 @@ import {
 } from './types'
 import { getBlockExplorerBlockInfoLink } from './utils'
 
-export function generateQueryWrapper<ReturnOfPreQuery, CommonParams>(
-  preQueryRun: (data: CommonParams) => Promise<ReturnOfPreQuery>
+export function queryWrapper<ReturnType, Params, AdditionalParam>(
+  func: (
+    params: Params,
+    additionalData: AdditionalParam
+  ) => Promise<ReturnType>,
+  getAdditionalData: () => Promise<AdditionalParam>
 ) {
-  return <ReturnType, Params extends CommonParams, AdditionalParam>(
-    func: (data: {
-      params: Params
-      additionalData: AdditionalParam
-      preQueryData: ReturnOfPreQuery
-    }) => Promise<ReturnType>,
-    getAdditionalData: () => Promise<AdditionalParam>
-  ) => {
-    return async ({ queryKey }: any) => {
-      const params = queryKey[1]
-      const preQueryData = await preQueryRun(params)
-      const additionalData = await getAdditionalData()
-      return func({ params, additionalData, preQueryData })
-    }
+  return async ({ queryKey }: any) => {
+    const params = queryKey[1]
+    const additionalData = await getAdditionalData()
+    return func(params, additionalData)
   }
 }
-
-export const queryWrapper = generateQueryWrapper(async () => null)
 
 export function mergeQueryConfig<T, V>(
   config?: QueryConfig<any, any>,

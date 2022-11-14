@@ -2,9 +2,9 @@ import { SubsocialApi } from '@subsocial/api'
 import { useMutation, UseMutationResult, useQuery } from '@tanstack/react-query'
 import {
   createTxAndSend,
-  generateQueryWrapper,
   makeCombinedCallback,
   mergeQueryConfig,
+  queryWrapper,
 } from '..'
 import {
   MutationConfig,
@@ -14,21 +14,16 @@ import {
 } from '../types'
 import { getConnectionConfig, getSubsocialApi } from './connection'
 
-export const subsocialQueryWrapper = generateQueryWrapper(async () => null)
-
 export function useSubsocialQuery<ReturnValue, Params>(
   params: { key: string; data: Params | null },
-  func: (data: {
-    params: Params
-    additionalData: SubsocialApi
-  }) => Promise<ReturnValue>,
+  func: (data: { params: Params; api: SubsocialApi }) => Promise<ReturnValue>,
   config?: QueryConfig,
   defaultConfig?: QueryConfig<ReturnValue, Params>
 ) {
   const mergedConfig = mergeQueryConfig(config, defaultConfig)
   return useQuery(
     [params.key, params.data],
-    subsocialQueryWrapper(func, getSubsocialApi),
+    queryWrapper(func, getSubsocialApi),
     mergedConfig
   )
 }
