@@ -49,15 +49,22 @@
     "pool-query": "^1.1.5"
   },
   "peerDependencies": {
-    "@tanstack/react-query": "^4.14.6",
     "@subsocial/api": "^0.7.8-dev.0",
     "@subsocial/definitions": "^0.7.8-dev.0",
     "@subsocial/types": "^0.6.8",
-    "@subsocial/utils": "^0.7.8-dev.0"
+    "@subsocial/utils": "^0.7.8-dev.0",
+    "@tanstack/react-query": "^4.14.6",
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0",
+    "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^13.1.0",
     "@commitlint/config-conventional": "^13.1.0",
+    "@subsocial/api": "^0.7.8-dev.0",
+    "@subsocial/definitions": "^0.7.8-dev.0",
+    "@subsocial/types": "^0.6.8",
+    "@subsocial/utils": "^0.7.8-dev.0",
+    "@tanstack/react-query": "^4.16.1",
     "@types/jest": "^27.0.1",
     "@types/react": "^18.0.25",
     "@typescript-eslint/eslint-plugin": "^4.31.1",
@@ -69,6 +76,8 @@
     "jest": "^27.2.0",
     "pinst": "^2.1.6",
     "prettier": "^2.4.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "ts-jest": "^27.0.5",
     "ts-loader": "^9.2.5",
     "typescript": "^4.4.3",
