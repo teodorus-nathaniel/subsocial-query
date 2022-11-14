@@ -14,11 +14,11 @@ import {
 } from '../types'
 import { getConnectionConfig, getSubsocialApi } from './connection'
 
+export type SubsocialParam<T> = { data: T } & { api: SubsocialApi }
+
 export function useSubsocialQuery<ReturnValue, Data>(
   params: { key: string; data: Data | null },
-  func: (
-    params: { data: Data } & { api: SubsocialApi }
-  ) => Promise<ReturnValue>,
+  func: (params: SubsocialParam<Data>) => Promise<ReturnValue>,
   config?: QueryConfig,
   defaultConfig?: QueryConfig<ReturnValue, Data>
 ) {
