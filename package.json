@@ -1,6 +1,6 @@
 {
   "name": "subsocial-query1",
-  "version": "1.0.9",
+  "version": "1.0.11",
   "description": "",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -45,7 +45,7 @@
     "url": "https://github.com/teodorus-nathaniel/subsocial-query/issues"
   },
   "dependencies": {
-    "pool-query": "^1.1.6"
+    "pool-query": "^1.1.9"
   },
   "peerDependencies": {
     "@subsocial/api": "^0.7.8-dev.0",
