@@ -63,7 +63,7 @@ export function useSubsocialQueries<ReturnValue, Data>(
 }
 
 export function useSubsocialMutation<Param>(
-  wallet: WalletAccount,
+  getWallet: () => Promise<WalletAccount>,
   transactionGenerator: (
     params: Param,
     api: SubsocialApi
@@ -72,6 +72,7 @@ export function useSubsocialMutation<Param>(
   defaultConfig?: MutationConfig<Param>
 ): UseMutationResult<string, Error, Param, unknown> {
   const workerFunc = async (param: Param) => {
+    const wallet = await getWallet()
     if (!wallet) throw new Error('You need to connect your wallet first!')
     const subsocialApi = await getSubsocialApi()
     return createTxAndSend(
