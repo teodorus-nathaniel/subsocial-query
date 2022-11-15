@@ -36,7 +36,7 @@ export function getConnectionConfig() {
 }
 export const setSubsocialConfig = (
   preset: keyof typeof presets,
-  customConfig?: SubsocialConnectionConfig
+  customConfig?: Partial<SubsocialConnectionConfig>
 ) => {
   config = { ...presets[preset], ...customConfig }
 }
