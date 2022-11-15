@@ -1,4 +1,5 @@
-import { QueryClient } from '@tanstack/react-query'
+import { QueryClient, UseQueryResult } from '@tanstack/react-query'
+import { useMemo } from 'react'
 import {
   MutationConfig,
   QueryConfig,
@@ -16,6 +17,12 @@ export function queryWrapper<ReturnType, Data, AdditionalData>(
     const additionalData = await getAdditionalData()
     return func({ ...additionalData, data })
   }
+}
+
+export function useIsAnyQueriesLoading(results: UseQueryResult[]) {
+  return useMemo(() => {
+    return results.some(({ isLoading }) => isLoading)
+  }, [results])
 }
 
 export function mergeQueryConfig<T, V>(
