@@ -12,9 +12,9 @@ export function queryWrapper<ReturnType, Data, AdditionalData>(
   getAdditionalData: () => Promise<AdditionalData>
 ) {
   return async ({ queryKey }: any) => {
-    const params = queryKey[1]
+    const data = queryKey[1]
     const additionalData = await getAdditionalData()
-    return func({ ...additionalData, data: params })
+    return func({ ...additionalData, data })
   }
 }
 
