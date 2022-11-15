@@ -1,19 +1,27 @@
 import { getSubstrateApi, SubsocialApi } from '@subsocial/api'
-import { SubsocialApiProps } from '@subsocial/api/types'
 
-const DEFAULT_STAGING_CONFIG = {
+export interface SubsocialConnectionConfig {
+  substrateUrl: string
+  ipfsNodeUrl: string
+  postConnectConfig?: (api: SubsocialApi) => void
+}
+
+const DEFAULT_STAGING_CONFIG: SubsocialConnectionConfig = {
   substrateUrl: 'wss://rco-para.subsocial.network',
-  ipfsNodeUrl: 'https://staging-ipfs.subsocial.network',
-  offchainUrl: 'https://staging-api.subsocial.network',
-  useServer: {
-    httpRequestMethod: 'get' as const,
+  ipfsNodeUrl: 'https://crustwebsites.net',
+  postConnectConfig: (api) => {
+    api.ipfs.setWriteHeaders({
+      authorization: 'Basic ' + CRUST_TEST_AUTH_KEY,
+    })
   },
 }
-const DEFAULT_PROD_CONFIG = {
+const DEFAULT_PROD_CONFIG: SubsocialConnectionConfig = {
   substrateUrl: 'wss://para.f3joule.space',
-  offchainUrl: 'https://app.subsocial.network/offchain',
-  ipfsNodeUrl: 'https://ipfs.subsocial.network',
+  ipfsNodeUrl: 'https://crustwebsites.net',
 }
+
+export const CRUST_TEST_AUTH_KEY =
+  'c3ViLTVGQTluUURWZzI2N0RFZDhtMVp5cFhMQm52TjdTRnhZd1Y3bmRxU1lHaU45VFRwdToweDEwMmQ3ZmJhYWQwZGUwNzFjNDFmM2NjYzQzYmQ0NzIxNzFkZGFiYWM0MzEzZTc5YTY3ZWExOWM0OWFlNjgyZjY0YWUxMmRlY2YyNzhjNTEwZGY4YzZjZTZhYzdlZTEwNzY2N2YzYTBjZjM5OGUxN2VhMzAyMmRkNmEyYjc1OTBi' // can only be used for testnet.
 
 let subsocialApi: Promise<SubsocialApi> | null = null
 const presets = {
@@ -22,28 +30,28 @@ const presets = {
 }
 const DEFAULT_CONFIG_PRESET: keyof typeof presets = 'staging'
 
-let config: Omit<SubsocialApiProps, 'substrateApi'> & { substrateUrl: string } =
-  presets[DEFAULT_CONFIG_PRESET]
+let config: SubsocialConnectionConfig = presets[DEFAULT_CONFIG_PRESET]
 export function getConnectionConfig() {
   return config
 }
 export const setSubsocialConfig = (
   preset: keyof typeof presets,
-  customConfig?: SubsocialApiProps
+  customConfig?: SubsocialConnectionConfig
 ) => {
   config = { ...presets[preset], ...customConfig }
 }
 
-export const getSubsocialApi = async () => {
-  if (subsocialApi) return subsocialApi
+export const getSubsocialApi = async (renew?: boolean) => {
+  if (subsocialApi && !renew) return subsocialApi
   const api = connectToSubsocialApi(config)
   subsocialApi = api
   return subsocialApi
 }
 
-async function connectToSubsocialApi(
-  config: Omit<SubsocialApiProps, 'substrateApi'> & { substrateUrl: string }
-) {
-  const substrateApi = await getSubstrateApi(config.substrateUrl)
-  return new SubsocialApi({ substrateApi, ...config })
+async function connectToSubsocialApi(config: SubsocialConnectionConfig) {
+  const { ipfsNodeUrl, substrateUrl, postConnectConfig } = config
+  const substrateApi = await getSubstrateApi(substrateUrl)
+  const api = new SubsocialApi({ ipfsNodeUrl, substrateApi })
+  postConnectConfig && postConnectConfig(api)
+  return api
 }
