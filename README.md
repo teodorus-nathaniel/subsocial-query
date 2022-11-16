@@ -10,9 +10,7 @@ This library also includes [pool-query](https://github.com/teodorus-nathaniel/po
 
 # Usage
 
-## Subsocial SDK
-
-### Subsocial Connection Config
+## Subsocial Connection Config
 
 ```tsx
 import { setSubsocialConfig } from 'subsocial-query1'
@@ -31,7 +29,7 @@ setSubsocialConfig('prod', {
 })
 ```
 
-### useSubsocialQuery
+## useSubsocialQuery
 
 #### Basic Usage
 
@@ -125,7 +123,7 @@ export default function App () {
 }
 ```
 
-### useSubsocialQueries
+## useSubsocialQueries
 
 This hook can be used if you want to get multiple data, but want to have single loading state that you can manage in one place.
 
@@ -160,7 +158,7 @@ export default function App() {
 }
 ```
 
-### queryInvalidation
+## queryInvalidation
 
 You can easily create query invalidation function with full typed parameter support with `queryInvalidation` function.
 
@@ -183,7 +181,7 @@ export default function App() {
 }
 ```
 
-### useSubsocialMutation
+## useSubsocialMutation
 
 This is used to easily create mutate function that signs txs and submits to the chain.
 
@@ -264,3 +262,9 @@ setupTxCallbacks({
   onError: () => {}, // hooks,
 })
 ```
+
+## Other things...
+
+This library can also be integrated with other services, not only subsocial SDK. For example, you can integrate graphql for this too, which makes it possible to integrate `subsquid` indexing graphql queries into the project with this package.
+
+You can see the example in the [Example Project](https://github.com/teodorus-nathaniel/subsocial-query-example) under /src/services/squid.
