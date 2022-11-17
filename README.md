@@ -13,7 +13,7 @@ This library also includes [pool-query](https://github.com/teodorus-nathaniel/po
 ## Subsocial Connection Config
 Default config is `staging`
 ```tsx
-import { setSubsocialConfig } from 'subsocial-query1'
+import { setSubsocialConfig } from 'subsocial-query'
 // You can override presets of IPFS/Substrate Node URL by passing the second parameter.
 // Use staging config, ipfs crust are already configured with testnet api key
 setSubsocialConfig('staging')
