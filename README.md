@@ -8,6 +8,14 @@ This library also includes [pool-query](https://github.com/teodorus-nathaniel/po
 
 [Example Vite project](https://github.com/teodorus-nathaniel/subsocial-query-example) that uses subsocial query. The project showcases every concepts that are explained under `Usage` heading
 
+# Installation
+```console
+yarn add subsocial-query
+
+# You also need to add peer dependencies
+yarn add @subsocial/api @subsocial/definitions @subsocial/types @subsocial/utils @tanstack/react-query
+```
+
 # Usage
 
 ## Subsocial Connection Config
