@@ -1,12 +1,12 @@
 {
-  "name": "subsocial-query1",
+  "name": "subsocial-query",
   "version": "1.0.0",
   "description": "",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/types/index.d.ts",
   "scripts": {
-    "postinstall": "husky install",
+    "_postinstall": "husky install",
     "prepublishOnly": "pinst --disable",
     "postpublish": "pinst --enable",
     "build": "npm run build:cjs && npm run build:esm && npm run build:types",
