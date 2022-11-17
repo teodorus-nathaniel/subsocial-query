@@ -11,7 +11,7 @@ This library also includes [pool-query](https://github.com/teodorus-nathaniel/po
 # Usage
 
 ## Subsocial Connection Config
-
+Default config is `staging`
 ```tsx
 import { setSubsocialConfig } from 'subsocial-query1'
 // You can override presets of IPFS/Substrate Node URL by passing the second parameter.
