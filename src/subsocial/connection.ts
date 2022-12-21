@@ -8,7 +8,7 @@ export interface SubsocialConnectionConfig {
 
 const DEFAULT_STAGING_CONFIG: SubsocialConnectionConfig = {
   substrateUrl: 'wss://rco-para.subsocial.network',
-  ipfsNodeUrl: 'https://crustwebsites.net',
+  ipfsNodeUrl: 'https://gw.crustfiles.app',
   postConnectConfig: (api) => {
     api.ipfs.setWriteHeaders({
       authorization: 'Basic ' + CRUST_TEST_AUTH_KEY,
@@ -17,7 +17,7 @@ const DEFAULT_STAGING_CONFIG: SubsocialConnectionConfig = {
 }
 const DEFAULT_PROD_CONFIG: SubsocialConnectionConfig = {
   substrateUrl: 'wss://para.f3joule.space',
-  ipfsNodeUrl: 'https://crustwebsites.net',
+  ipfsNodeUrl: 'https://ipfs.subsocial.network',
 }
 
 export const CRUST_TEST_AUTH_KEY =
@@ -53,10 +53,7 @@ async function connectToSubsocialApi(config: SubsocialConnectionConfig) {
   const substrateApi = await getSubstrateApi(substrateUrl)
   const api = new SubsocialApi({
     ipfsNodeUrl,
-    substrateApi,
-    useServer: {
-      httpRequestMethod: 'get',
-    },
+    substrateApi
   })
   postConnectConfig && postConnectConfig(api)
   return api
